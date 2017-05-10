@@ -1,4 +1,7 @@
 # GearBox
 Graphic simulation of a motorcycle transmission
 
-To run this, grab the files in the "dist" directory (including the "libs" directory with the Java3D jars) and do "java -jar GearBox.jar" in that directory.
+To run this on your computer:
+* Install the Java Runtime Environment from https://java.com/download/
+* Download package.zip and unzip it.
+* Run "java -jar GearBox.jar" in a DOS window.
