@@ -160,87 +160,83 @@ public class GearBox extends JApplet {
         Canvas3D canvas3D = new Canvas3D(config);
         add("Center", canvas3D);
 
-        // set up control panel best we can using javacrap that's too stupid to distribute cells
-        // properly
-        JPanel panel = new JPanel(new GridBagLayout());
+        // top line of control panel
         JPanel panelTop = new JPanel(new GridBagLayout());
-        JPanel panelBot = new JPanel(new GridBagLayout());
         GridBagConstraints c;
-        JCheckBox cb;
-        JButton btn;
 
-        // top line
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.insets.right = 20;
-        inputRPMLabel = new JLabel("-");
-        panelTop.add(inputRPMLabel, c);
+        // input RPM label
+        inputRPMLabel = new JLabel();
+        inputRPMLabel.setPreferredSize(new java.awt.Dimension(150, 15));
+        panelTop.add(inputRPMLabel, new GridBagConstraints());
 
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.weightx = 1;
-        c.anchor = GridBagConstraints.LINE_END;
-        btn = new JButton("Up-shift");
-        btn.addActionListener(new ActionListener() {
+        // up-shift button
+        JButton btn1 = new JButton("Up-shift");
+        btn1.setPreferredSize(new java.awt.Dimension(120, 25));
+        btn1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 upshift();
             }
         });
-        panelTop.add(btn, c);
-
         c = new GridBagConstraints();
-        c.gridx = 2;
-        c.insets.left = 20;
-        c.insets.right = 20;
-        shiftPosLabel = new JLabel("-");
+        c.anchor = GridBagConstraints.EAST;
+        c.weightx = 1.0;
+        panelTop.add(btn1, c);
+
+        // gear shift position label
+        shiftPosLabel = new JLabel();
+        shiftPosLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        c = new GridBagConstraints();
+        c.ipadx = 40;
         panelTop.add(shiftPosLabel, c);
 
-        c = new GridBagConstraints();
-        c.gridx = 3;
-        c.weightx = 1;
-        c.anchor = GridBagConstraints.LINE_START;
-        btn = new JButton("Down-shift");
-        btn.addActionListener(new ActionListener() {
+        // down-shift button
+        JButton btn2 = new JButton("Down-shift");
+        btn2.setPreferredSize(new java.awt.Dimension(120, 25));
+        btn2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 downshift();
             }
         });
-        panelTop.add(btn, c);
-
         c = new GridBagConstraints();
-        c.gridx = 4;
-        c.insets.left = 20;
-        cb = new JCheckBox("Animation");
+        c.anchor = java.awt.GridBagConstraints.WEST;
+        c.weightx = 1.0;
+        panelTop.add(btn2, c);
+
+        // animation checkbox
+        JCheckBox cb = new JCheckBox("Animation");
+        cb.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        cb.setPreferredSize(new java.awt.Dimension(150, 23));
         cb.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 animateShafts(e);
             }
         });
-        panelTop.add(cb, c);
+        panelTop.add(cb, new java.awt.GridBagConstraints());
 
-        // bottom line
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        outputRPMLabel = new JLabel("Output RPM: 0    ");
-        panelBot.add(outputRPMLabel, c);
+        // bottom line of control panel
+        JPanel panelBot = new JPanel(new GridLayout());
 
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.weightx = 1;
-        shiftDescLabel = new JLabel("---------------------------------------", JLabel.CENTER);
-        panelBot.add(shiftDescLabel, c);
+        // output RPM label
+        outputRPMLabel = new JLabel();
+        panelBot.add(outputRPMLabel);
 
-        c = new GridBagConstraints();
-        c.gridx = 2;
+        // description in center
+        shiftDescLabel = new JLabel();
+        shiftDescLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        panelBot.add(shiftDescLabel);
+
+        // animation speed checkbox
         cb = new JCheckBox("Fast Anim");
         cb.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 animateSpeed(e);
             }
         });
-        panelBot.add(cb, c);
+        cb.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        panelBot.add(cb);
 
-        // now install subpanels
+        // now install subpanels in bottom of display
+        JPanel panel = new JPanel(new GridBagLayout());
         c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 1;
@@ -652,7 +648,7 @@ public class GearBox extends JApplet {
         oldGearPosition = gearPosition;
 
         // update labels
-        String rpm = "0    ";
+        String rpm = "Not Connected";
         inputRPMLabel.setText("Input RPM: 4,000");
         if (currentRatio != 0) {
             rpm = String.format("%,.0f", 4000 / currentRatio);
