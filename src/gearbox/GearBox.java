@@ -203,37 +203,40 @@ public class GearBox extends JApplet {
         panelTop.add(btn2, c);
 
         // animation checkbox
-        JCheckBox cb = new JCheckBox("Animation");
-        cb.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        cb.setPreferredSize(new java.awt.Dimension(150, 23));
-        cb.addItemListener(new ItemListener() {
+        JCheckBox cb1 = new JCheckBox("Animation");
+        cb1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        cb1.setPreferredSize(new java.awt.Dimension(150, 23));
+        cb1.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 animateShafts(e);
             }
         });
-        panelTop.add(cb, new java.awt.GridBagConstraints());
+        panelTop.add(cb1, new java.awt.GridBagConstraints());
 
         // bottom line of control panel
-        JPanel panelBot = new JPanel(new GridLayout());
+        JPanel panelBot = new JPanel(new GridBagLayout());
 
         // output RPM label
         outputRPMLabel = new JLabel();
-        panelBot.add(outputRPMLabel);
+        outputRPMLabel.setPreferredSize(new java.awt.Dimension(200, 15));
+        panelBot.add(outputRPMLabel, new GridBagConstraints());
 
         // description in center
         shiftDescLabel = new JLabel();
-        shiftDescLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        panelBot.add(shiftDescLabel);
+        c = new GridBagConstraints();
+        c.weightx = 1.0;
+        panelBot.add(shiftDescLabel, c);
 
         // animation speed checkbox
-        cb = new JCheckBox("Fast Anim");
-        cb.addItemListener(new ItemListener() {
+        JCheckBox cb2 = new JCheckBox("Fast Anim");
+        cb2.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 animateSpeed(e);
             }
         });
-        cb.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        panelBot.add(cb);
+        cb2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        cb2.setPreferredSize(new java.awt.Dimension(200, 23));
+        panelBot.add(cb2, new GridBagConstraints());
 
         // now install subpanels in bottom of display
         JPanel panel = new JPanel(new GridBagLayout());
