@@ -118,6 +118,12 @@ public class GearBox extends JApplet {
     // gear position display
     JLabel shiftPosLabel;
 
+    // input RPM display
+    JLabel inputRPMLabel;
+
+    // output RPM display
+    JLabel outputRPMLabel;
+
     // gear geometry objects
     Gear gears[][] = new Gear[gearTeeth.length][gearTeeth[0].length];
 
@@ -154,61 +160,98 @@ public class GearBox extends JApplet {
         Canvas3D canvas3D = new Canvas3D(config);
         add("Center", canvas3D);
 
-        // set up control panel
+        // set up control panel best we can using javacrap that's too stupid to distribute cells
+        // properly
         JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
+        JPanel panelTop = new JPanel(new GridBagLayout());
+        JPanel panelBot = new JPanel(new GridBagLayout());
+        GridBagConstraints c;
         JCheckBox cb;
         JButton btn;
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.weightx = 0.1;
-        cb = new JCheckBox("Fast Anim");
-        cb.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                animateSpeed(e);
-            }
-        });
-        panel.add(cb, gbc);
-        shiftPosLabel = new JLabel("-");
-        gbc.gridx = 2;
-        panel.add(shiftPosLabel, gbc);
-        gbc.gridx = 4;
-        cb = new JCheckBox("Animation");
-        cb.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                animateShafts(e);
-            }
-        });
-        panel.add(cb, gbc);
-        gbc.gridx = 1;
-        gbc.weightx = 0.4;
-        gbc.anchor = GridBagConstraints.LINE_END;
+
+        // top line
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.insets.right = 20;
+        inputRPMLabel = new JLabel("-");
+        panelTop.add(inputRPMLabel, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.weightx = 1;
+        c.anchor = GridBagConstraints.LINE_END;
         btn = new JButton("Up-shift");
         btn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 upshift();
             }
         });
-        panel.add(btn, gbc);
-        gbc.gridx = 3;
+        panelTop.add(btn, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 2;
+        c.insets.left = 20;
+        c.insets.right = 20;
+        shiftPosLabel = new JLabel("-");
+        panelTop.add(shiftPosLabel, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 3;
+        c.weightx = 1;
+        c.anchor = GridBagConstraints.LINE_START;
         btn = new JButton("Down-shift");
-        gbc.anchor = GridBagConstraints.LINE_START;
         btn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 downshift();
             }
         });
-        panel.add(btn, gbc);
-        // occupies the entire line since it doesn't resize dynamically
-        // must start with text, or space doesn't get allocated for object
-        // plus it needs to be centered
+        panelTop.add(btn, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 4;
+        c.insets.left = 20;
+        cb = new JCheckBox("Animation");
+        cb.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                animateShafts(e);
+            }
+        });
+        panelTop.add(cb, c);
+
+        // bottom line
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        outputRPMLabel = new JLabel("Output RPM: 0    ");
+        panelBot.add(outputRPMLabel, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.weightx = 1;
         shiftDescLabel = new JLabel("---------------------------------------", JLabel.CENTER);
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.weightx = 1.0;
-        gbc.gridwidth = 5;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(shiftDescLabel, gbc);
+        panelBot.add(shiftDescLabel, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 2;
+        cb = new JCheckBox("Fast Anim");
+        cb.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                animateSpeed(e);
+            }
+        });
+        panelBot.add(cb, c);
+
+        // now install subpanels
+        c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1;
+        panel.add(panelTop, c);
+
+        c = new GridBagConstraints();
+        c.gridy = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1;
+        panel.add(panelBot, c);
+
         add("South", panel);
 
         // create the root of the scene graph
@@ -589,7 +632,7 @@ public class GearBox extends JApplet {
         outputAlpha.setIncreasingAlphaDuration((long) outputRPM);
 
         // set speed of individual spinning gears
-        double currentSpeed;
+        double currentSpeed = 0;
         for (int i = 0; i < gearAlphas.length; i++) {
             for (int j = 0; j < gearAlphas[i].length; j++) {
                 if (gearAlphas[i][j] != null) {
@@ -607,6 +650,14 @@ public class GearBox extends JApplet {
             }
         }
         oldGearPosition = gearPosition;
+
+        // update labels
+        String rpm = "0    ";
+        inputRPMLabel.setText("Input RPM: 4,000");
+        if (currentRatio != 0) {
+            rpm = String.format("%,.0f", 4000 / currentRatio);
+        }
+        outputRPMLabel.setText("Output RPM: " + rpm);
     }
 
     // shift down one gear
@@ -635,7 +686,7 @@ public class GearBox extends JApplet {
         shift();
     }
 
-    // set shift animation inputRPM to fast or slow
+    // set shift animation input RPM to fast or slow
     public void animateSpeed(ItemEvent event) {
         if (event.getStateChange() == ItemEvent.SELECTED) {
             inputRPM = 2500;
@@ -681,12 +732,5 @@ public class GearBox extends JApplet {
     public static void main(String[] args) {
         JMainFrame mf = new JMainFrame(new GearBox(), 640, 480);
         mf.setTitle("Motorcycle Transmission Applet");
-        Dimension d = mf.getToolkit().getScreenSize();
-
-        // Set output window size
-        mf.setSize((int) (d.width * 0.75), (int) (d.height * 0.75));
-
-        // Center realized window on screen
-        mf.setLocation((d.width - mf.getWidth()) / 2, (d.height - mf.getHeight()) / 2);
     }
 }
