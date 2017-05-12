@@ -11,6 +11,8 @@ Parts of the display:
 * Grey gears: Can spin freely (unless pinned by the dogs on a sliding gear) but not slide.
 * Large grey cylinder: Shift cam, turned by the foot pedal linkage, and controls the shift forks via deep grooves
 
+The gears currently transmitting power are shaded red.
+
 Controls:
 * Rotate: Left mouse button
 * Zoom: Middle mouse button
